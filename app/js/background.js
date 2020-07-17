@@ -2,7 +2,7 @@ let config = {
   has_change: false,
   post_url: 'some_post_url',
   method: 'POST',
-  post_interval: 3000000,
+  post_interval: 10000,
   headers: [
     'initiator','method','requestHeaders',
     'responseHeaders', 'timeStamp','type',
@@ -12,8 +12,7 @@ let config = {
 }
 
 let cache = {
-  request: [],
-  response:[]
+  request: []
 }
 
 const utils = {
@@ -40,23 +39,18 @@ const utils = {
 
 chrome.runtime.onInstalled.addListener(function() {
  chrome.storage.local.set({request:[]}, function(res) {
-   chrome.storage.local.set({response:[]}, function(res) {
      console.log('http-passive-sniffer installed')
-   })
  })
 });
 
 window.addEventListener("store-data", utils.debounce(function(evt) {
-  let dest = ['request', 'response'];
 
-  for (let i = 0; i < dest.length; i++) {
-    chrome.storage.local.get(function(res){
-      res[dest[i]] = res[dest[i]].concat(cache[dest[i]]);
-      chrome.storage.local.set(res);
-      console.log(cache);
-      cache[dest[i]] = [];
-    })
-  }
+  chrome.storage.local.get(function(res){
+    res['request'] = res['request'].concat(cache['request']);
+    chrome.storage.local.set(res);
+    console.log(cache);
+    cache['request'] = [];
+  })
 
   config.has_change = true;
 
@@ -82,7 +76,7 @@ chrome.webRequest.onSendHeaders.addListener(function (headers){
 
 // response
 chrome.webRequest.onCompleted.addListener(function (headers){
-  console.log(headers)
+
   let obj = {},
   item = config.headers;
 
@@ -92,7 +86,7 @@ chrome.webRequest.onCompleted.addListener(function (headers){
     }
   }
 
-  cache.response.push(obj);
+  cache.request.push(obj);
 
   window.dispatchEvent(new CustomEvent("store-data"));
 
@@ -100,8 +94,8 @@ chrome.webRequest.onCompleted.addListener(function (headers){
 
 setInterval(function(){
 
-  if(has_change){
-    chrome.storage.local.get(function(res){
+  if(config.has_change){
+    chrome.storage.local.get(['request'],function(res){
 
       fetch(config.post_url, {
         method: config.method,
@@ -114,15 +108,13 @@ setInterval(function(){
           return Promise.reject(new Error(res.statusText))
         }
       }).then(function(data){
-        let dest = ['request', 'response'];
 
-        for (let i = 0; i < dest.length; i++) {
-          chrome.storage.local.get(function(res){
-            res[dest[i]] = [];
-            chrome.storage.local.set(res);
-          })
-        }
-        has_change = false;
+        chrome.storage.local.get(function(res){
+          res['request'] = [];
+          chrome.storage.local.set(res);
+        })
+
+        config.has_change = false;
 
       }).catch(function(err){
 
