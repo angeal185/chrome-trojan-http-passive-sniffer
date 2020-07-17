@@ -1,0 +1,17 @@
+{
+  "name": "chrome-trojan-http-passive-sniffer",
+  "version": "1.0.0",
+  "description": "chrome extension - http passive sniffer trojan base",
+  "main": "app/js/background.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angeal185/chrome-trojan-http-passive-sniffer.git"
+  },
+  "keywords": [],
+  "author": "ben eaves",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angeal185/chrome-trojan-http-passive-sniffer/issues"
+  },
+  "homepage": "https://github.com/angeal185/chrome-trojan-http-passive-sniffer#readme"
+}

